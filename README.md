@@ -14,4 +14,8 @@ My personal repository of tools to help work with the Big Data Bowl Datasets (20
 - Explore (Visualization)
 - Modeling (Play Outcome, Player Location, Impact, Contribution to play outcome, etc.)
 
+## Initial Assumptions
+
+- The data are locally available _OR_ can be referenced via a __valid file path__
+
 
