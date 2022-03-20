@@ -3,6 +3,8 @@
 # imports
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
+import pandas as pd
+import imageio
 
 
 # a plot of the field 
@@ -81,4 +83,77 @@ def create_football_field(linenumbers=True,
         plt.text(hl + 2, 50, '<- {}'.format(highlighted_name),
                  color='yellow')
     return fig, ax
+
+def plot_play(p, 
+              frame=1, 
+              homecol="red", 
+              awaycol="blue", 
+              ballcol="orange", 
+              show = True, 
+              save=False):
+    
+    # assert that a play Dataframe is passed.  Likely will be from extract <inserthere>
+    assert isinstance(p, pd.DataFrame)
+    p.columns = p.columns.str.lower()
+
+    fig, ax = create_football_field()
+
+    if frame is not None and isinstance(frame, int):
+        p = p.loc[p.frameid==frame, :]
+    # away team
+    p.query("team == 'away'").plot(x='x', y='y', kind='scatter', ax=ax, color=awaycol, s=30, legend='Away')
+    # home team
+    p.query("team == 'home'").plot(x='x', y='y', kind='scatter', ax=ax, color=homecol, s=30, legend='Home')   
+    # football 
+    p.query("team == 'football'").plot(x='x', y='y', kind='scatter', ax=ax, color=ballcol, s=30, legend='Football')
+    
+    plt.legend()
+
+    if show:
+        plt.show() 
+
+    if save:
+        plt.savefig(f"plots/frame-{frame}.png")  
+
+    plt.close()
+
+
+
+# function to make the gif from a play
+def make_gif(play, 
+             fname="play.gif", 
+             homecol="red", 
+             awaycol="blue", 
+             ballcol="orange", 
+             show=True, 
+             save=False):
+  """
+  Uses plot_play and create_football_field to take a valid play and plot each frame
+  and stitch together the gif for the play on the field.
+  """
+
+  # isolate the frames for the play
+  frames = list(set(play.frameid))
+
+  # generate the image for each frame
+  for frame in frames:
+    plot_play(p=play, 
+              frame=frame, 
+              save=True, 
+              show=False, 
+              awaycol=awaycol, 
+              homecol=homecol, 
+              ballcol=ballcol,
+              show=show,
+              save=save)
+  
+  # assemble into a gif
+  filenames = os.listdir("plots/")
+  images = []
+  
+  for filename in filenames:
+    images.append(imageio.imread("plots/"+ filename))
+
+  imageio.mimsave(fname, images)
+
 
