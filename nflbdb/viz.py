@@ -143,9 +143,7 @@ def make_gif(play,
               show=False, 
               awaycol=awaycol, 
               homecol=homecol, 
-              ballcol=ballcol,
-              show=show,
-              save=save)
+              ballcol=ballcol)
   
   # assemble into a gif
   filenames = os.listdir("plots/")
